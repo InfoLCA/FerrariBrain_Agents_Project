@@ -1,0 +1,40 @@
+# Phase00 Controls v1 (skeleton) — safe, minimal workflow to confirm wiring.
+# Does not alter your principal spine; original file remains untouched.
+
+name: Phase00 Controls v1 (skeleton)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+env:
+  IMAGE_DIGEST: docker.io/legalcaseallies/alpine-test@sha256:12d60bc2651acf125ddc54ce76e4a3fedcad94778a90904800e26b72b80918a8
+  REPORT_DIR: Phase00_DAUL_Agent/Outputs/docker/reports
+
+jobs:
+  sanity:
+    name: Sanity check (echo + artifact)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Echo timestamp
+        run: echo "phase00 controls skeleton OK $(date -u +%FT%TZ)"
+
+      - name: Create minimal artifact
+        run: |
+          mkdir -p "$REPORT_DIR"
+          printf '{"status":"ok","ts":"%s"}\n' "$(date -u +%FT%TZ)" > "$REPORT_DIR/skeleton.keep.json"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase00-skeleton
+          path: ${{ env.REPORT_DIR }}/skeleton.keep.json
