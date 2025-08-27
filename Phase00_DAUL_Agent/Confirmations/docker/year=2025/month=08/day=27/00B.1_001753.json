@@ -1,0 +1,1 @@
+{"phase":"P00","step":"00B.1","micro":"B","cmd":"Phase00_DAUL_Agent/Scripts/docker/00_sbom_and_scan.sh docker.io/legalcaseallies/alpine-test@sha256:12d60bc2651acf125ddc54ce76e4a3fedcad94778a90904800e26b72b80918a8","files":[],"exit_code":0,"ts":"2025-08-27T00:17:53Z"}

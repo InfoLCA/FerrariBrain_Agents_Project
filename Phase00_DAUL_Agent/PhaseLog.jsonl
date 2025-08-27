@@ -1,0 +1,4 @@
+{"phase":"P00","step":"00B.1","micro":"B","packet_path":"Confirmations/docker/year=2025/month=08/day=27/00B.1_001936.json","packet_sha256":"0ea693ef2349c8e16960fead9dd196875f6b82104f05f31fd2e3af05aef89d04","ts":"2025-08-27T00:19:36Z"}
+{"phase":"P00","step":"00B.3","micro":"B","packet_path":"Confirmations/docker/year=2025/month=08/day=27/00B.3_002322.json","packet_sha256":"3592bc3f7138530b4e7da261fde38cebe0882abe6da13c3cc82e069fd99ef0d1","ts":"2025-08-27T00:23:22Z"}
+{"phase":"P00","step":"00B.4","micro":"B","packet_path":"Confirmations/docker/year=2025/month=08/day=27/00B.4_002433.json","packet_sha256":"85cdfdc8f839ff12553af098faedb3c7a41f1879e9faa19c122becc4ead476ad","ts":"2025-08-27T00:24:33Z"}
+{"phase":"P00","step":"00B.CHECKPOINT","micro":"B","packet_path":"Confirmations/docker/year=2025/month=08/day=27/00B.CHECKPOINT_002539.json","packet_sha256":"e6d32bd6ebdf5b3445a95ed172e063d057b83912f3ff270b6bd8cb9f2fd9d796","ts":"2025-08-27T00:25:39Z"}

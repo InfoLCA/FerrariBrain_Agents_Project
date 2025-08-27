@@ -1,0 +1,30 @@
+schema_version: 1.0.0
+phase_id: 01
+component: manifests-openai
+scope: [manifests]
+
+timestamps:
+  event_time: <ISO8601>        # when the manifest was created
+  ingest_time: <ISO8601>       # when recorded into memory
+
+partitioning:
+  strategy: event_time
+  path_template: "Manifests/openai/year=${YYYY}/month=${MM}/day=${DD}/"
+
+provenance:
+  source_session_id: <session_id>
+  manifests:
+    - path: <relative_path_to_manifest>
+      sha256: <sha256_hash>
+
+privacy:
+  pii_present: false
+  redaction_status: "not_required"
+
+contracts:
+  memory_binding: config/agent_memory.binding.yaml
+  categories_registry: config/memory_categories.json
+  chunk_schema: schemas/memory_chunk.schema.json
+  router_policy: config/router_policy.yaml
+
+status: initialized

@@ -1,0 +1,22 @@
+schema_version: 1.0.0
+phase_id: 00
+component: controls
+scope: [openai, docker]
+
+timestamps:
+  event_time: <ISO8601>
+  ingest_time: <ISO8601>
+
+partitioning:
+  strategy: event_time
+  path_template: "<folder>/${agent}/year=${YYYY}/month=${MM}/day=${DD}/"
+
+provenance:
+  source_session_id: <session_id>
+  notes: "Phase00 pre-checkpoint controls for all phases."
+
+privacy:
+  pii_present: false
+  redaction_status: "not_required"
+
+status: initialized

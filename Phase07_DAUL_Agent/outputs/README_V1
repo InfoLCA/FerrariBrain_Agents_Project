@@ -1,0 +1,68 @@
+<!-- readme_version: 1.0.0 -->
+
+# Phase 01 — Outputs
+
+## Purpose
+This folder contains all **execution outputs** generated during **Phase 01 (Dual-Agent A/B)**.  
+It is populated by both agents:
+- **A (OpenAI agent)** — API-first outputs  
+- **B (Docker agent)** — local runtime outputs  
+
+## Layout
+
+Outputs/
+├─ openai/          # outputs from OpenAI agent microsteps
+├─ docker/          # outputs from Docker agent microsteps
+├─ shared/          # merged or cross-agent artifacts
+└─ metadata_V1.yaml # machine-readable index for this Outputs folder
+
+## What goes here
+- JSONL evidence logs, hashes, stdout captures  
+- SBOMs, scan reports, preflight results  
+- Any file emitted by execution microsteps in Phase 01  
+
+## Evidence & Partitioning
+All outputs must be written under dated partitions by **event_time**:
+
+Outputs//year=YYYY/month=MM/day=DD/
+
+- **event_time** = when the step executed  
+- **ingest_time** = when logged in metadata  
+
+## Required metadata fields (`metadata_V1.yaml`)
+```yaml
+schema_version: 1.0.0
+phase_id: 01
+component: outputs
+scope: [openai, docker, shared]
+timestamps:
+  event_time: <ISO8601>
+  ingest_time: <ISO8601>
+provenance:
+  source_session_id: <id>
+  generated_files:
+    - path: <relative_path>
+      sha256: <hash>
+privacy:
+  pii_present: false
+  redaction_status: "not_required"
+status: initialized
+
+Contracts this folder must respect
+	•	Memory API binding: config/agent_memory.binding.yaml
+	•	Categories registry: config/memory_categories.json
+	•	Chunk schema: schemas/memory_chunk.schema.json
+	•	Router policy: config/router_policy.yaml
+
+Security
+	•	No secrets or .env values are written here.
+	•	All outputs are immutable once generated; new runs create new files + new hashes.
+
+Usage (per microstep)
+	1.	Execution writes artifacts into the corresponding agent folder.
+	2.	Each artifact is hashed (SHA256) and recorded in PhaseLog.jsonl.
+	3.	Metadata is updated with event_time + ingest_time.
+
+Guiding rule: Outputs are immutable evidence of execution.
+
+

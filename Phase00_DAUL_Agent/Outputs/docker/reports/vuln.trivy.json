@@ -1,0 +1,70 @@
+{
+  "SchemaVersion": 2,
+  "CreatedAt": "2025-08-26T20:16:21.651334-04:00",
+  "ArtifactName": "docker.io/legalcaseallies/alpine-test@sha256:12d60bc2651acf125ddc54ce76e4a3fedcad94778a90904800e26b72b80918a8",
+  "ArtifactType": "container_image",
+  "Metadata": {
+    "Size": 9102848,
+    "OS": {
+      "Family": "alpine",
+      "Name": "3.20.7"
+    },
+    "ImageID": "sha256:12d60bc2651acf125ddc54ce76e4a3fedcad94778a90904800e26b72b80918a8",
+    "DiffIDs": [
+      "sha256:1e890da81ec91b6231c3aa9b3301c15d99af3c1d59a312fb3132a5d4df2e8e3e"
+    ],
+    "RepoTags": [
+      "legalcaseallies/alpine-test@sha256:12d60bc2651acf125ddc54ce76e4a3fedcad94778a90904800e26b72b80918a8"
+    ],
+    "RepoDigests": [
+      "legalcaseallies/alpine-test@sha256:12d60bc2651acf125ddc54ce76e4a3fedcad94778a90904800e26b72b80918a8"
+    ],
+    "ImageConfig": {
+      "architecture": "arm64",
+      "created": "2025-07-15T11:31:35Z",
+      "history": [
+        {
+          "created": "2025-07-15T11:31:35Z",
+          "created_by": "ADD alpine-minirootfs-3.20.7-aarch64.tar.gz / # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2025-07-15T11:31:35Z",
+          "created_by": "CMD [\"/bin/sh\"]",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        }
+      ],
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:1e890da81ec91b6231c3aa9b3301c15d99af3c1d59a312fb3132a5d4df2e8e3e"
+        ]
+      },
+      "config": {
+        "Cmd": [
+          "/bin/sh"
+        ],
+        "Env": [
+          "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        ],
+        "WorkingDir": "/"
+      }
+    },
+    "Layers": [
+      {
+        "Size": 9102848,
+        "Digest": "sha256:13e713f825654e9e4f57146ec84918d478434f708d4d3d9d18d0e7ba2be56801",
+        "DiffID": "sha256:1e890da81ec91b6231c3aa9b3301c15d99af3c1d59a312fb3132a5d4df2e8e3e"
+      }
+    ]
+  },
+  "Results": [
+    {
+      "Target": "docker.io/legalcaseallies/alpine-test@sha256:12d60bc2651acf125ddc54ce76e4a3fedcad94778a90904800e26b72b80918a8 (alpine 3.20.7)",
+      "Class": "os-pkgs",
+      "Type": "alpine"
+    }
+  ]
+}

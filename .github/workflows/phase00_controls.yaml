@@ -1,0 +1,105 @@
+# (REPLACEMENT FILE or NEW FILE OK)
+# Phase00 Controls — CI enforcement gates for SBOM, Scan, Signature & Attestation
+# Runs at repo root so it applies to ALL phases. Fails PRs if gates fail.
+
+name: Phase00 Controls
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  IMAGE_DIGEST: docker.io/legalcaseallies/alpine-test@sha256:12d60bc2651acf125ddc54ce76e4a3fedcad94778a90904800e26b72b80918a8
+  REPORT_DIR: Phase00_DAUL_Agent/Outputs/docker/reports
+  ARTIFACT_DIR: Phase00_DAUL_Agent/Outputs/docker/artifacts
+
+jobs:
+  sbom_and_scan:
+    name: SBOM + Vulnerability Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ensure folders
+        run: mkdir -p "$REPORT_DIR" "$ARTIFACT_DIR"
+
+      - name: Generate SBOM (CycloneDX JSON via Syft)
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ env.IMAGE_DIGEST }}
+          format: cyclonedx-json
+          output-file: ${{ env.REPORT_DIR }}/sbom.cdx.json
+
+      - name: Vulnerability Scan (Trivy) — fail on CRITICAL,HIGH
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: ${{ env.IMAGE_DIGEST }}
+          format: json
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+          exit-code: "1"
+          output: ${{ env.REPORT_DIR }}/vuln.trivy.json
+
+      - name: Assert SBOM present
+        run: test -s "$REPORT_DIR/sbom.cdx.json"
+
+      - name: Upload SBOM & scan as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase00-sbom-and-scan
+          path: |
+            ${{ env.REPORT_DIR }}/sbom.cdx.json
+            ${{ env.REPORT_DIR }}/vuln.trivy.json
+
+  verify_signature_and_attestation:
+    name: Verify Signature & Attestation
+    needs: sbom_and_scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Ensure report folder
+        run: mkdir -p "$REPORT_DIR"
+
+      # Tight identity: matches earlier local verification you saw
+      - name: Verify signature (keyless, identity bound)
+        run: |
+          cosign verify \
+            --certificate-identity "info@legalcaseallies.com" \
+            --certificate-oidc-issuer "https://accounts.google.com" \
+            --output json \
+            "${IMAGE_DIGEST}" \
+            > "${REPORT_DIR}/verify.signature.json"
+
+      - name: Verify attestation (CycloneDX)
+        run: |
+          cosign verify-attestation \
+            --type cyclonedx \
+            --certificate-identity "info@legalcaseallies.com" \
+            --certificate-oidc-issuer "https://accounts.google.com" \
+            --output json \
+            "${IMAGE_DIGEST}" \
+            > "${REPORT_DIR}/verify.attestation.json"
+
+      - name: Upload verification artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase00-verification
+          path: |
+            ${{ env.REPORT_DIR }}/verify.signature.json
+            ${{ env.REPORT_DIR }}/verify.attestation.json
+
+  policy_gate:
+    name: Gate Summary (blocks PR if prior jobs failed)
+    needs: [ sbom_and_scan, verify_signature_and_attestation ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: All gates passed
+        run: echo "Phase00 gates OK: SBOM present, scan clean (no CRITICAL/HIGH), signature & attestation verified."
