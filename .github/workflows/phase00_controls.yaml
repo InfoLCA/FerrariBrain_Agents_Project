@@ -1,6 +1,5 @@
-# (REPLACEMENT FILE or NEW FILE OK)
 # Phase00 Controls — CI enforcement gates for SBOM, Scan, Signature & Attestation
-# Runs at repo root so it applies to ALL phases. Fails PRs if gates fail.
+# Applies at repo root so it covers all phases. Includes manual trigger (workflow_dispatch).
 
 name: Phase00 Controls
 
@@ -9,6 +8,11 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  id-token: write   # required for cosign keyless verification
 
 env:
   IMAGE_DIGEST: docker.io/legalcaseallies/alpine-test@sha256:12d60bc2651acf125ddc54ce76e4a3fedcad94778a90904800e26b72b80918a8
@@ -26,7 +30,7 @@ jobs:
       - name: Ensure folders
         run: mkdir -p "$REPORT_DIR" "$ARTIFACT_DIR"
 
-      - name: Generate SBOM (CycloneDX JSON via Syft)
+      - name: Generate SBOM (CycloneDX JSON via Syft action)
         uses: anchore/sbom-action@v0
         with:
           image: ${{ env.IMAGE_DIGEST }}
@@ -68,7 +72,6 @@ jobs:
       - name: Ensure report folder
         run: mkdir -p "$REPORT_DIR"
 
-      # Tight identity: matches earlier local verification you saw
       - name: Verify signature (keyless, identity bound)
         run: |
           cosign verify \
