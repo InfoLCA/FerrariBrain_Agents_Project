@@ -1,5 +1,5 @@
 # Phase00 Controls — CI enforcement gates for SBOM, Scan, Signature & Attestation
-# Includes manual trigger (workflow_dispatch). Runs on repo root.
+# Includes manual trigger (workflow_dispatch). Runs at repo root.
 
 name: Phase00 Controls
 
@@ -12,7 +12,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write   # required when using keyless features; harmless for verify
+  id-token: write   # required for OIDC tokens used by cosign (even for verify)
 
 env:
   IMAGE_DIGEST: docker.io/legalcaseallies/alpine-test@sha256:12d60bc2651acf125ddc54ce76e4a3fedcad94778a90904800e26b72b80918a8
@@ -30,7 +30,7 @@ jobs:
       - name: Ensure folders
         run: mkdir -p "$REPORT_DIR" "$ARTIFACT_DIR"
 
-      - name: Generate SBOM (CycloneDX JSON)
+      - name: Generate SBOM (CycloneDX JSON via Syft)
         uses: anchore/sbom-action@v0
         with:
           image: ${{ env.IMAGE_DIGEST }}
